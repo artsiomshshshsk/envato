@@ -1,10 +1,18 @@
 from selenium import webdriver
 from time import sleep
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
-
-driver = webdriver.Chrome(executable_path='/Users/artsiom/Music-Botting/envato/chromedriver')
-driver.get('https://elements.envato.com/audio')
-
+def wait_element(x_path):
+    global driver
+    try:
+        element = WebDriverWait(driver, 15).until(
+            EC.presence_of_element_located((By.XPATH, f"{x_path}"))
+        )
+        return element
+    except:
+        return 0
 
 categories = {
     "house":"https://elements.envato.com/audio/genre-house/min-length-01:30/max-length-03:00/sort-by-latest",
@@ -15,6 +23,31 @@ categories = {
     "rock":"https://elements.envato.com/audio/genre-ock/min-length-01:30/max-length-03:00/sort-by-latest",
     "blues":"https://elements.envato.com/audio/genre-blues/min-length-01:30/max-length-03:00/sort-by-latest"
 }
+
+driver = webdriver.Chrome(executable_path='/Users/artsiom/Music-Botting/envato/chromedriver')
+
+#/html/body/div[2]/div[1]/main/div/div/section/div/div[3]/div[3]/div[1]/ul/li[1]/div/a
+#/html/body/div[2]/div[1]/main/div/div/section/div/div[3]/div[3]/div[1]/ul/li[2]/div/a
+#/html/body/div[2]/div[1]/main/div/div/section/div/div[3]/div[3]/div[1]/ul/li[24]/div/a
+
+
+
+
+
+for each in categories:
+    driver.get(categories[each])
+    ntfctn = wait_element('//*[@id="app"]/div[1]/main/div/div/section/div/div[3]/div[2]/div[2]/div/select').text
+
+    #print(ntfctn)
+
+    sleep(2)
+    for i in range(1,25):           # there are 24 songs on the page
+        element = driver.find_element_by_xpath(f'/html/body/div[2]/div[1]/main/div/div/section/div/div[3]/div[3]/div[1]/ul/li[{i}]/div/a')
+        element.location_once_scrolled_into_view
+        href = element.get_attribute('href')
+    
+        print(href)
+
 
 
 sleep(5)
