@@ -41,13 +41,27 @@ for each in categories:
     #print(ntfctn)
 
     sleep(2)
-    for i in range(1,25):           # there are 24 songs on the page
-        element = driver.find_element_by_xpath(f'/html/body/div[2]/div[1]/main/div/div/section/div/div[3]/div[3]/div[1]/ul/li[{i}]/div/a')
-        element.location_once_scrolled_into_view
-        href = element.get_attribute('href')
     
-        print(href)
+    next_but_is_not_found = False
+    link_number = 2
+    while not next_but_is_not_found:
+        for i in range(1,25):           # 24 songs on the page
+            element = wait_element(f'/html/body/div[2]/div[1]/main/div/div/section/div/div[3]/div[3]/div[1]/ul/li[{i}]/div/a')
+            element.location_once_scrolled_into_view
+            href = element.get_attribute('href')
+            sleep(0.5)
+            print(href)
 
+        try:
+            next_but = driver.find_element_by_link_text(f'{link_number}')
+                                                    
+            next_but.click()
+            ntfctn = wait_element('//*[@id="app"]/div[1]/main/div/div/section/div/div[3]/div[2]/div[2]/div/select').text
+            link_number += 1
+        except:
+            next_but_is_not_found = True
+            print('Next page is not found')
+            break
 
 
 sleep(5)
