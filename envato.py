@@ -3,6 +3,8 @@ from time import sleep
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import platform
+
 
 def wait_element(x_path):
     global driver
@@ -23,12 +25,22 @@ categories = {
     "rock":"https://elements.envato.com/audio/genre-ock/min-length-01:30/max-length-03:00/sort-by-latest",
     "blues":"https://elements.envato.com/audio/genre-blues/min-length-01:30/max-length-03:00/sort-by-latest"
 }
+os_info = platform.system()
+print(os_info)
 
-driver = webdriver.Chrome(executable_path='/Users/artsiom/Music-Botting/envato/chromedriver')
+
+if os_info == 'Windows':
+    ex_path = 'chromedriver.exe'
+else:
+    ex_path = '/Users/artsiom/Music-Botting/envato/chromedriver'
+
+
+driver = webdriver.Chrome(executable_path=ex_path)
 
 #/html/body/div[2]/div[1]/main/div/div/section/div/div[3]/div[3]/div[1]/ul/li[1]/div/a
 #/html/body/div[2]/div[1]/main/div/div/section/div/div[3]/div[3]/div[1]/ul/li[2]/div/a
 #/html/body/div[2]/div[1]/main/div/div/section/div/div[3]/div[3]/div[1]/ul/li[24]/div/a
+
 
 
 
