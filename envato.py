@@ -81,11 +81,13 @@ if not os.path.isdir(songs):
 
 if os_info == 'Windows':
     ex_path = 'chromedriver.exe'
+    subprocess.call("TASKKILL /f  /IM  CHROME.EXE")
+    subprocess.call("TASKKILL /f  /IM  CHROMEDRIVER.EXE")
 else:
     ex_path = '/Users/artsiom/Music-Botting/envato/chromedriver'
 
-subprocess.call("TASKKILL /f  /IM  CHROME.EXE")
-subprocess.call("TASKKILL /f  /IM  CHROMEDRIVER.EXE")
+
+
 chrome_options = Options()
 chrome_options.add_argument(r"user-data-dir=C:\Users\%s\AppData\Local\Google\Chrome\User Data" % getuser())
 prefs = {'download.default_directory' : downloads_dir}
