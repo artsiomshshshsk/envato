@@ -15,6 +15,7 @@ from zipfile import ZipFile
 import wave
 import contextlib
 import shutil
+import random
 
 
 
@@ -92,10 +93,19 @@ chrome_options.add_experimental_option('prefs', prefs)
 driver = webdriver.Chrome(executable_path=ex_path,chrome_options=chrome_options)
 
 
+all_genres = [[each, categories[each]] for each in categories]
+print(all_genres)
+random.shuffle(all_genres)
 
+for each in all_genres:
+    category = each[0]
 
-for each in categories:
-    driver.get(categories[each])
+    category_dir = os.path.join(songs, category)
+    if not os.path.isdir( category_dir ):
+        os.mkdir( category_dir )
+        print( f'{category_dir} is created' )
+
+    driver.get(each[1])
     ntfctn = wait_element('//*[@id="app"]/div[1]/main/div/div/section/div/div[3]/div[2]/div[2]/div/select').text
     sleep(2)
     
@@ -150,16 +160,9 @@ for each in categories:
                 if file.endswith('.wav'):
                     dur = int(get_wav_duration(file))
                     if 90 <= dur <= 150:
-                        shutil.copy(file,songs)
+                        shutil.copy(file, category_dir)
                         break
             remove_all_files_in_directory(downloads_dir)
-
-
-
-
-
-
-
             driver.close()
             driver.switch_to.window( driver.window_handles[0] )
         try:
