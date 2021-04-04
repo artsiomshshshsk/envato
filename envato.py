@@ -8,6 +8,12 @@ from getpass import getuser
 from selenium.webdriver.chrome.options import Options
 import subprocess
 import names
+import pyautogui
+import os
+import sys
+
+def get_script_path():
+    return os.path.dirname(os.path.realpath(sys.argv[0]))
 
 
 def wait_element(x_path):
@@ -23,6 +29,12 @@ def wait_element(x_path):
 def get_name():
     return names.get_full_name( gender='male')
 
+def remove_all_files_in_direcroty(path):
+    for file in os.listdir(path):
+        file = os.path.join(path,file)
+        os.remove(file)
+
+
 
 categories = {
     "house":"https://elements.envato.com/audio/genre-house/min-length-01:30/max-length-03:00/sort-by-latest",
@@ -37,6 +49,14 @@ os_info = platform.system()
 print(os_info)
 
 
+downloads_dir = os.path.join(get_script_path(),'downloads')
+if not os.path.isdir(downloads_dir):
+    os.mkdir(downloads_dir)
+    print('Downloads folder is created.')
+
+
+
+
 if os_info == 'Windows':
     ex_path = 'chromedriver.exe'
 else:
@@ -46,22 +66,22 @@ subprocess.call("TASKKILL /f  /IM  CHROME.EXE")
 subprocess.call("TASKKILL /f  /IM  CHROMEDRIVER.EXE")
 chrome_options = Options()
 chrome_options.add_argument(r"user-data-dir=C:\Users\%s\AppData\Local\Google\Chrome\User Data" % getuser())
+prefs = {'download.default_directory' : downloads_dir}
+chrome_options.add_experimental_option('prefs', prefs)
 driver = webdriver.Chrome(executable_path=ex_path,chrome_options=chrome_options)
-DOWNLOADS = r"C:\Users\Artsiom\Desktop\git_envato\downloads"
+
+
 
 
 for each in categories:
     driver.get(categories[each])
     ntfctn = wait_element('//*[@id="app"]/div[1]/main/div/div/section/div/div[3]/div[2]/div[2]/div/select').text
-
-    #print(ntfctn)
-
     sleep(2)
     
     next_but_is_not_found = False
     link_number = 2
     while not next_but_is_not_found:
-        for i in range(1,25):           # 24 songs on the page
+        for i in range(1,25):       # 24 songs on the page
             element = wait_element(f'/html/body/div[2]/div[1]/main/div/div/section/div/div[3]/div[3]/div[1]/ul/li[{i}]/div/a')
             element.location_once_scrolled_into_view
             href = element.get_attribute('href')
@@ -74,12 +94,26 @@ for each in categories:
 
             project_name = get_name()
             download_button = wait_element('/html/body/div[2]/div[1]/main/div/div/div[1]/div/div/div[2]/div[2]/div[2]/button')
+
+            pyautogui.press( 'pageup' )
+            sleep(1)
             download_button.click()
+            sleep(2)
             create_new_project = wait_element('/html/body/div[8]/div/div/div/div/div/form/div[1]/div[2]/div/div[3]/div[2]')
             create_new_project.click()
             project_name_input = wait_element('/html/body/div[8]/div/div/div/div/div/form/div[1]/div[2]/div/div[1]/div/div[2]/input')
+            sleep( 2 )
 
             project_name_input.send_keys(project_name)
+            submit = wait_element('/html/body/div[8]/div/div/div/div/div/form/div[2]/button')
+            submit.click()
+            # waiting for file to be downloaded
+
+            
+
+
+
+
             driver.close()
             driver.switch_to.window( driver.window_handles[0] )
         try:
