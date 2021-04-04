@@ -11,6 +11,20 @@ import names
 import pyautogui
 import os
 import sys
+from zipfile import ZipFile
+import wave
+import contextlib
+import shutil
+
+
+
+def get_wav_duration(path):
+    with contextlib.closing( wave.open( path, 'r' ) ) as f:
+        frames = f.getnframes()
+        rate = f.getframerate()
+        duration = frames / float( rate )
+        return duration
+
 
 def get_script_path():
     return os.path.dirname(os.path.realpath(sys.argv[0]))
@@ -29,7 +43,7 @@ def wait_element(x_path):
 def get_name():
     return names.get_full_name( gender='male')
 
-def remove_all_files_in_direcroty(path):
+def remove_all_files_in_directory(path):
     for file in os.listdir(path):
         file = os.path.join(path,file)
         os.remove(file)
@@ -37,13 +51,13 @@ def remove_all_files_in_direcroty(path):
 
 
 categories = {
-    "house":"https://elements.envato.com/audio/genre-house/min-length-01:30/max-length-03:00/sort-by-latest",
-    "jazz":"https://elements.envato.com/audio/genre-jazz/min-length-01:30/max-length-03:00/sort-by-latest",
-    "lofi":"https://elements.envato.com/audio/genre-lofi/min-length-01:30/max-length-03:00/sort-by-latest",
-    "lounge":"https://elements.envato.com/audio/genre-lounge/min-length-01:30/max-length-03:00/sort-by-latest",
-    "metal":"https://elements.envato.com/audio/genre-metal/min-length-01:30/max-length-03:00/sort-by-latest",
-    "rock":"https://elements.envato.com/audio/genre-ock/min-length-01:30/max-length-03:00/sort-by-latest",
-    "blues":"https://elements.envato.com/audio/genre-blues/min-length-01:30/max-length-03:00/sort-by-latest"
+    "house":"https://elements.envato.com/audio/genre-house/min-length-01:30/max-length-02:30/sort-by-latest",
+    "jazz":"https://elements.envato.com/audio/genre-jazz/min-length-01:30/max-length-02:30/sort-by-latest",
+    "lofi":"https://elements.envato.com/audio/genre-lofi/min-length-01:30/max-length-02:30/sort-by-latest",
+    "lounge":"https://elements.envato.com/audio/genre-lounge/min-length-01:30/max-length-02:30/sort-by-latest",
+    "metal":"https://elements.envato.com/audio/genre-metal/min-length-01:30/max-length-02:30/sort-by-latest",
+    "rock":"https://elements.envato.com/audio/genre-ock/min-length-01:30/max-length-02:30/sort-by-latest",
+    "blues":"https://elements.envato.com/audio/genre-blues/min-length-01:30/max-length-02:30/sort-by-latest"
 }
 os_info = platform.system()
 print(os_info)
@@ -53,6 +67,13 @@ downloads_dir = os.path.join(get_script_path(),'downloads')
 if not os.path.isdir(downloads_dir):
     os.mkdir(downloads_dir)
     print('Downloads folder is created.')
+
+
+songs = os.path.join(get_script_path(), 'songs')
+
+if not os.path.isdir(songs):
+    os.mkdir(songs)
+    print('Songs folder is created.')
 
 
 
@@ -81,7 +102,7 @@ for each in categories:
     next_but_is_not_found = False
     link_number = 2
     while not next_but_is_not_found:
-        for i in range(1,25):       # 24 songs on the page
+        for i in range(1, 25):       # 24 songs on the page
             element = wait_element(f'/html/body/div[2]/div[1]/main/div/div/section/div/div[3]/div[3]/div[1]/ul/li[{i}]/div/a')
             element.location_once_scrolled_into_view
             href = element.get_attribute('href')
@@ -106,10 +127,35 @@ for each in categories:
 
             project_name_input.send_keys(project_name)
             submit = wait_element('/html/body/div[8]/div/div/div/div/div/form/div[2]/button')
+            remove_all_files_in_directory(downloads_dir)
             submit.click()
             # waiting for file to be downloaded
+           
+            file_is_downloaded = False
+            while not file_is_downloaded:
+                for file in os.listdir(downloads_dir):
+                    file = os.path.join(downloads_dir,file)
+                    if file.endswith('.zip'):
+                        file_is_downloaded = True
+                        print(f'{file} is downloaded')
+                        downloaded_zip = file
+                        break
 
-            
+            with ZipFile(downloaded_zip, 'r') as zipObj:
+                zipObj.extractall(downloads_dir)
+            os.remove(downloaded_zip)
+
+            for file in os.listdir(downloads_dir):
+                file = os.path.join(downloads_dir, file)
+                if file.endswith('.wav'):
+                    dur = int(get_wav_duration(file))
+                    if 90 <= dur <= 150:
+                        shutil.copy(file,songs)
+                        break
+            remove_all_files_in_directory(downloads_dir)
+
+
+
 
 
 
