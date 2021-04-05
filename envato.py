@@ -83,13 +83,17 @@ if os_info == 'Windows':
     ex_path = 'chromedriver.exe'
     subprocess.call("TASKKILL /f  /IM  CHROME.EXE")
     subprocess.call("TASKKILL /f  /IM  CHROMEDRIVER.EXE")
+    user_data_dir = r"user-data-dir=C:\Users\%s\AppData\Local\Google\Chrome\User Data" % getuser()
 else:
-    ex_path = '/Users/artsiom/Music-Botting/envato/chromedriver'
+    ex_path = 'chromedriver'
+    user_data_dir = r"user-data-dir=/Users/\%s/Library/Application Support/Google/Chrome/Default" % getuser()
+
+
 
 
 
 chrome_options = Options()
-chrome_options.add_argument(r"user-data-dir=C:\Users\%s\AppData\Local\Google\Chrome\User Data" % getuser())
+chrome_options.add_argument(user_data_dir)
 prefs = {'download.default_directory' : downloads_dir}
 chrome_options.add_experimental_option('prefs', prefs)
 driver = webdriver.Chrome(executable_path=ex_path,chrome_options=chrome_options)
@@ -180,7 +184,6 @@ for each in all_genres:
 
 
 sleep(5)
-
 driver.quit()
 
 
