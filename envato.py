@@ -19,13 +19,22 @@ import random
 
 
 
+
+def add_url_to_db(url):
+    pass
+
+def if_url_already_in_db(url):
+    # true        уже в базе
+    # false       нету в базе
+
+
+
 def get_wav_duration(path):
     with contextlib.closing( wave.open( path, 'r' ) ) as f:
         frames = f.getnframes()
         rate = f.getframerate()
         duration = frames / float( rate )
         return duration
-
 
 def get_script_path():
     return os.path.dirname(os.path.realpath(sys.argv[0]))
