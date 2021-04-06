@@ -23,10 +23,11 @@ import random
 def add_url_to_db(url):
     pass
 
+
 def if_url_already_in_db(url):
     # true        уже в базе
     # false       нету в базе
-
+    pass
 
 
 def get_wav_duration(path):
@@ -102,7 +103,8 @@ else:
     user_data_dir = r"user-data-dir=/Users/%s/Library/Application Support/Google/Chrome/Default" % getuser()
     print(user_data_dir)
 
-
+#if database is not created 
+#create here
 
 
 chrome_options = Options()
@@ -135,6 +137,12 @@ for each in all_genres:
             element = wait_element(f'/html/body/div[2]/div[1]/main/div/div/section/div/div[3]/div[3]/div[1]/ul/li[{i}]/div/a')
             element.location_once_scrolled_into_view
             href = element.get_attribute('href')
+
+            #href = url of song to check 
+
+            if if_url_already_in_db(href):
+                continue
+
             driver.execute_script( "window.open('');" )
             driver.switch_to.window(driver.window_handles[1] )
             driver.get(href)
@@ -182,6 +190,11 @@ for each in all_genres:
                         shutil.copy(file, category_dir)
                         break
             remove_all_files_in_directory(downloads_dir)
+
+            #adding url to db
+            add_url_to_db(href)
+
+
             driver.close()
             driver.switch_to.window( driver.window_handles[0] )
         try:
