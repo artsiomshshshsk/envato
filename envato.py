@@ -53,6 +53,8 @@ def get_script_path():
     return os.path.dirname(os.path.realpath(sys.argv[0]))
 
 
+
+
 def wait_element(x_path):
     global driver
     try:
