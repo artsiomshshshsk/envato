@@ -23,11 +23,21 @@ import sqlite3
 
 def detect_and_solve_captcha():
     global driver
-    try:
-        status = driver.find_element_by_class_name('status')
-    except:
+    sleep(3)
+    captcha_is_fouind = False
+    while not captcha_is_fouind:
 
-        breakpoint()
+        try:
+            status = driver.find_element_by_class_name('status')
+            #print((status.text))
+            if status.text == 'Solved':
+                return True
+            sleep(1)
+        except:
+            print('no captcha')
+            return False                 #if no captcha
+
+
 
 
 def add_url_to_db(url):
@@ -187,6 +197,9 @@ for each in all_genres:
                     submit = wait_element('/html/body/div[8]/div/div/div/div/div/form/div[2]/button')
                     remove_all_files_in_directory(downloads_dir)
                     submit.click()
+                    if detect_and_solve_captcha():
+                        submit.click()
+
                     break
                 except Exception:
                     traceback.print_exc()
