@@ -1,2 +1,2 @@
 # envato
-This program was developed to automate downloading of songs from envato website.
+This program was developed to download songs from envato.com
