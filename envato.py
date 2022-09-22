@@ -122,13 +122,14 @@ if not os.path.isdir(songs):
 
 if os_info == 'Windows':
     ex_path = 'chromedriver.exe'
-    subprocess.call("TASKKILL /f  /IM  CHROME.EXE")
+    ess.call("TASKKILL /f  /IM  CHROME.EXE")
     subprocess.call("TASKKILL /f  /IM  CHROMEDRIVER.EXE")
     user_data_dir = r"user-data-dir=C:\Users\%s\AppData\Local\Google\Chrome\User Data" % getuser()
     print(user_data_dir)
 else:
     pth = get_script_path()
     ex_path = os.path.join(pth,'chromedriver')
+    subprocess.call("pkill chrome")
     print(ex_path)
 
     user_data_dir = r"user-data-dir=/Users/%s/Library/Application Support/Google/Chrome/Default" % getuser()
